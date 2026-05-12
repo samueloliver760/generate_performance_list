@@ -11,7 +11,9 @@ Sub GenerateSlidesFromSheet()
     Dim item As Variant
     
     Set http = CreateObject("MSXML2.ServerXMLHTTP")
-    http.Open "GET", "https://performancelist-api.vercel.app/api/configuration", False
+
+    /* Diisi dengan API Neon untuk mengambil data dari DB */
+    http.Open "GET", "xxxxx", False
     http.send
     
     Set json = JsonConverter.ParseJson(http.responseText)
@@ -24,7 +26,8 @@ Sub GenerateSlidesFromSheet()
     On Error GoTo 0
     pptApp.Visible = True
 
-    pptPath = "D:\Templete Lagu.pptx"
+    /* Diisi dengan direkotri dari templete PPT Event */
+    pptPath = "xxxxxxxx"
     Set pptPres = pptApp.Presentations.Open(pptPath)
     
     Set templeteSlide = pptPres.Slides(1)
