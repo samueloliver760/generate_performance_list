@@ -11,9 +11,7 @@ Sub GenerateSlidesFromSheet()
     Dim item As Variant
     
     Set http = CreateObject("MSXML2.ServerXMLHTTP")
-
-    /* Diisi dengan API Neon untuk mengambil data dari DB */
-    http.Open "GET", "xxxxx", False
+    http.Open "GET", "XXXXXX", False
     http.send
     
     Set json = JsonConverter.ParseJson(http.responseText)
@@ -26,8 +24,7 @@ Sub GenerateSlidesFromSheet()
     On Error GoTo 0
     pptApp.Visible = True
 
-    /* Diisi dengan direkotri dari templete PPT Event */
-    pptPath = "xxxxxxxx"
+    pptPath = "XXXXXXXXXXX"
     Set pptPres = pptApp.Presentations.Open(pptPath)
     
     Set templeteSlide = pptPres.Slides(1)
@@ -54,9 +51,13 @@ Sub GenerateSlidesFromSheet()
             Call ReplaceTextInShapes(newSlide, "{{name}}", name)
             Call ReplaceTextInShapes(newSlide, "{{from}}", from)
             Call ReplaceTextInShapes(newSlide, "{{category}}", category)
-            Call ReplaceTextInShapes(newSlide, "{{song1}} {{conductor1}}", song_1 & ", " & composer_1)
-            Call ReplaceTextInShapes(newSlide, "{{song2}} {{conductor2}}", "")
-            Call ReplaceTextInShapes(newSlide, "Conducted by {{conductor}}", "")
+            Call ReplaceTextInShapes(newSlide, "{{song1}}", song_1)
+            Call ReplaceTextInShapes(newSlide, "{{conductor1}}", composer_1)
+            Call ReplaceTextInShapes(newSlide, "{{song2}}", ' ')
+            Call ReplaceTextInShapes(newSlide, "{{conductor2}}", ' ')
+            Call ReplaceTextInShapes(newSlide, "{{conductor}}", ' ')
+            Call ReplaceTextInShapes(newSlide, "Conducted by", ' ')
+
         Else
             templeteSlide.Copy
             Set newSlide = pptPres.Slides.Paste(pptPres.Slides.Count + 1)(1)
@@ -65,8 +66,10 @@ Sub GenerateSlidesFromSheet()
             Call ReplaceTextInShapes(newSlide, "{{from}}", from)
             Call ReplaceTextInShapes(newSlide, "{{category}}", category)
             Call ReplaceTextInShapes(newSlide, "{{conductor}}", conductor)
-            Call ReplaceTextInShapes(newSlide, "{{song1}} {{conductor1}}", song_1 & ", " & composer_1)
-            Call ReplaceTextInShapes(newSlide, "{{song2}} {{conductor2}}", song_2 & ", " & composer_2)
+            Call ReplaceTextInShapes(newSlide, "{{song1}}", song_1)
+            Call ReplaceTextInShapes(newSlide, "{{conductor1}}", composer_1)
+            Call ReplaceTextInShapes(newSlide, "{{song2}}", song_2)
+            Call ReplaceTextInShapes(newSlide, "{{conductor2}}", composer_2)
             
         End If
     Next item
