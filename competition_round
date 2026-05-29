@@ -54,9 +54,9 @@ Sub GenerateSlidesFromSheet()
             Call ReplaceTextInShapes(newSlide, "{{song1}}", song_1)
             Call ReplaceTextInShapes(newSlide, "{{conductor1}}", composer_1)
             Call ReplaceTextInShapes(newSlide, "{{song2}}", ' ')
-            Call ReplaceTextInShapes(newSlide, "{{conductor2}}", ' ')
-            Call ReplaceTextInShapes(newSlide, "{{conductor}}", ' ')
-            Call ReplaceTextInShapes(newSlide, "Conducted by", ' ')
+            Call ReplaceTextInShapes(newSlide, "{{conductor2}}", " ")
+            Call ReplaceTextInShapes(newSlide, "{{conductor}}", "  ")
+            Call ReplaceTextInShapes(newSlide, "Conducted by", " ")
 
         Else
             templeteSlide.Copy
