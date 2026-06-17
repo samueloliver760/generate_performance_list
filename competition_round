@@ -3,7 +3,8 @@ Option Explicit
 Sub GenerateSlidesFromSheet()
     Dim pptApp As Object
     Dim pptPres As Object
-    Dim templeteSlide As Object
+    Dim templeteSlideChoir As Object
+    Dim templeteSlideSolo As Object
     Dim newSlide As Object    
     Dim pptPath As String
     Dim http As Object
@@ -11,7 +12,7 @@ Sub GenerateSlidesFromSheet()
     Dim item As Variant
     
     Set http = CreateObject("MSXML2.ServerXMLHTTP")
-    http.Open "GET", "XXXXXX", False
+    http.Open "GET", "xxxxx", False
     http.send
     
     Set json = JsonConverter.ParseJson(http.responseText)
@@ -24,10 +25,11 @@ Sub GenerateSlidesFromSheet()
     On Error GoTo 0
     pptApp.Visible = True
 
-    pptPath = "XXXXXXXXXXX"
+    pptPath = "xxxxx"
     Set pptPres = pptApp.Presentations.Open(pptPath)
     
-    Set templeteSlide = pptPres.Slides(1)
+    Set templeteSlideChoir = pptPres.Slides(1)
+    Set templeteSlideSolo = pptPres.Slides(2)
     
     For Each item In json
         Dim comp_type As String, category As String, name As String, conductor As String
@@ -44,8 +46,8 @@ Sub GenerateSlidesFromSheet()
         song_2 = SafeToString(item("song2_title"))
         composer_2 = SafeToString(item("song2_composer"))
         
-        If Trim(conductor) = "" And Trim(song_2) = "" And Trim(composer_2) = "" Then
-            templeteSlide.Copy
+        If comp_type = "Solo Singing Competition" Then
+            templeteSlideSolo.Copy
             Set newSlide = pptPres.Slides.Paste(pptPres.Slides.Count + 1)(1)
             Call ReplaceTextInShapes(newSlide, "{{comp_type}}", comp_type)
             Call ReplaceTextInShapes(newSlide, "{{name}}", name)
@@ -53,13 +55,8 @@ Sub GenerateSlidesFromSheet()
             Call ReplaceTextInShapes(newSlide, "{{category}}", category)
             Call ReplaceTextInShapes(newSlide, "{{song1}}", song_1)
             Call ReplaceTextInShapes(newSlide, "{{conductor1}}", composer_1)
-            Call ReplaceTextInShapes(newSlide, "{{song2}}", ' ')
-            Call ReplaceTextInShapes(newSlide, "{{conductor2}}", " ")
-            Call ReplaceTextInShapes(newSlide, "{{conductor}}", "  ")
-            Call ReplaceTextInShapes(newSlide, "Conducted by", " ")
-
         Else
-            templeteSlide.Copy
+            templeteSlideChoir.Copy
             Set newSlide = pptPres.Slides.Paste(pptPres.Slides.Count + 1)(1)
             Call ReplaceTextInShapes(newSlide, "{{comp_type}}", comp_type)
             Call ReplaceTextInShapes(newSlide, "{{name}}", name)
