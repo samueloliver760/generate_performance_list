@@ -1,18 +1,10 @@
 Option Explicit
 
 Sub GenerateSlidesFromSheet()
-    Dim pptApp As Object
-    Dim pptPres As Object
-    Dim templeteSlideChoir As Object
-    Dim templeteSlideSolo As Object
-    Dim newSlide As Object    
-    Dim pptPath As String
-    Dim http As Object
-    Dim json As Object
-    Dim item As Variant
+    Dim pptApp As Object, pptPres As Object, templeteSlideChoir As Object, templeteSlideSolo As Object, newSlide As Object, pptPath As String, http As Object, json As Object, item As Variant
     
     Set http = CreateObject("MSXML2.ServerXMLHTTP")
-    http.Open "GET", "xxxxx", False
+    http.Open "GET", "https://performancelist-api.vercel.app/api/configuration", False
     http.send
     
     Set json = JsonConverter.ParseJson(http.responseText)
@@ -25,49 +17,35 @@ Sub GenerateSlidesFromSheet()
     On Error GoTo 0
     pptApp.Visible = True
 
-    pptPath = "xxxxx"
+    pptPath = "D:\Templete Lagu BICF15.pptx"
     Set pptPres = pptApp.Presentations.Open(pptPath)
     
     Set templeteSlideChoir = pptPres.Slides(1)
     Set templeteSlideSolo = pptPres.Slides(2)
     
     For Each item In json
-        Dim comp_type As String, category As String, name As String, conductor As String
-        Dim from As String, song_1 As String, composer_1 As String
-        Dim song_2 As String, composer_2 As String
-        
-        comp_type = SafeToString(item("comtype_name"))
-        category = SafeToString(item("category_name"))
-        name = SafeToString(item("participant_name"))
-        conductor = SafeToString(item("conductor_name"))
-        from = SafeToString(item("from"))
-        song_1 = SafeToString(item("song1_title"))
-        composer_1 = SafeToString(item("song1_composer"))
-        song_2 = SafeToString(item("song2_title"))
-        composer_2 = SafeToString(item("song2_composer"))
-        
-        If comp_type = "Solo Singing Competition" Then
+        Dim comType As String
+        comType = SafeToString(item("comtype_name"))
+
+        If comType = "Solo Singing Competition" Then
             templeteSlideSolo.Copy
-            Set newSlide = pptPres.Slides.Paste(pptPres.Slides.Count + 1)(1)
-            Call ReplaceTextInShapes(newSlide, "{{comp_type}}", comp_type)
-            Call ReplaceTextInShapes(newSlide, "{{name}}", name)
-            Call ReplaceTextInShapes(newSlide, "{{from}}", from)
-            Call ReplaceTextInShapes(newSlide, "{{category}}", category)
-            Call ReplaceTextInShapes(newSlide, "{{song1}}", song_1)
-            Call ReplaceTextInShapes(newSlide, "{{conductor1}}", composer_1)
         Else
             templeteSlideChoir.Copy
-            Set newSlide = pptPres.Slides.Paste(pptPres.Slides.Count + 1)(1)
-            Call ReplaceTextInShapes(newSlide, "{{comp_type}}", comp_type)
-            Call ReplaceTextInShapes(newSlide, "{{name}}", name)
-            Call ReplaceTextInShapes(newSlide, "{{from}}", from)
-            Call ReplaceTextInShapes(newSlide, "{{category}}", category)
-            Call ReplaceTextInShapes(newSlide, "{{conductor}}", conductor)
-            Call ReplaceTextInShapes(newSlide, "{{song1}}", song_1)
-            Call ReplaceTextInShapes(newSlide, "{{conductor1}}", composer_1)
-            Call ReplaceTextInShapes(newSlide, "{{song2}}", song_2)
-            Call ReplaceTextInShapes(newSlide, "{{conductor2}}", composer_2)
-            
+        End If
+
+        Set newSlide = pptPres.Slides.Paste(pptPres.Slides.Count + 1)(1)
+
+        Call ReplaceTextInShapes(newSlide, "{{comp_type}}", comType)
+        Call ReplaceTextInShapes(newSlide, "{{name}}", SafeToString(item("participant_name")))
+        Call ReplaceTextInShapes(newSlide, "{{from}}", SafeToString(item("from")))
+        Call ReplaceTextInShapes(newSlide, "{{category}}", SafeToString(item("category_name")))
+        Call ReplaceTextInShapes(newSlide, "{{song1}}", SafeToString(item("song1_title")))
+        Call ReplaceTextInShapes(newSlide, "{{conductor1}}", SafeToString(item("song1_composer")))
+
+        If comType <> "Solo Singing Competition" Then
+            Call ReplaceTextInShapes(newSlide, "{{song2}}", SafeToString(item("song2_title")))
+            Call ReplaceTextInShapes(newSlide, "{{conductor2}}", SafeToString(item("song2_composer")))
+            Call ReplaceTextInShapes(newSlide, "{{conductor}}", SafeToString(item("conductor_name")))
         End If
     Next item
     
