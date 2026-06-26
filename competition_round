@@ -4,7 +4,7 @@ Sub GenerateSlidesFromSheet()
     Dim pptApp As Object, pptPres As Object, templeteSlideChoir As Object, templeteSlideSolo As Object, newSlide As Object, pptPath As String, http As Object, json As Object, item As Variant
     
     Set http = CreateObject("MSXML2.ServerXMLHTTP")
-    http.Open "GET", "https://performancelist-api.vercel.app/api/configuration", False
+    http.Open "GET", "xxxx", False
     http.send
     
     Set json = JsonConverter.ParseJson(http.responseText)
@@ -17,7 +17,7 @@ Sub GenerateSlidesFromSheet()
     On Error GoTo 0
     pptApp.Visible = True
 
-    pptPath = "D:\Templete Lagu BICF15.pptx"
+    pptPath = "xxxx"
     Set pptPres = pptApp.Presentations.Open(pptPath)
     
     Set templeteSlideChoir = pptPres.Slides(1)
