@@ -4,3 +4,6 @@ Cara penggunaan:
 3. Ke tab "Developer" kemudian ke Visual Basic
 4. Copy paste code yang akan digunakan dan isi bagian "xxxx" dengan API dan direktori templete PPT
 5. Tekan tombol Play (10 dari kiri) untuk menjalankan programnya, tunggu hingga prosesnya selesai
+
+Catatan:
+1. Untuk competition_round, digunakan untuk Grand Prix juga, ubah code pada roundtype_id untuk mengubah dari Competition Round ke Grand Prix
