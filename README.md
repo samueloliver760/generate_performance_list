@@ -7,3 +7,9 @@ Cara penggunaan:
 
 Catatan:
 1. Untuk competition_round, digunakan untuk Grand Prix juga, ubah code pada roundtype_id untuk mengubah dari Competition Round ke Grand Prix
+2. Untuk mengubah kompetisinya, pergi ke folder API yang dibutuhkan lalu ganti kodenya competition_id, Codenya seperti berikut:
+  CP-0004 = BICF 15 (2026)
+  CP-0005	= SWCF 2026 
+  CP-0006	= YWCF 2027 
+  CP-0007	= IBCF 2026 
+  CP-0013	= BICF 16 (2027)
