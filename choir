@@ -1,0 +1,101 @@
+Option Explicit
+
+Sub GenerateSlidesFromSheet()
+    Dim pptApp As Object, pptPres As Object, templeteSlideChoir As Object, templeteSlideSolo As Object, newSlide As Object, pptPath As String, http As Object, json As Object, item As Variant
+    
+    Set http = CreateObject("MSXML2.ServerXMLHTTP")
+    http.Open "GET", "xxxx", False
+    http.send
+    
+    Set json = JsonConverter.ParseJson(http.responseText)
+    
+    On Error Resume Next
+    Set pptApp = GetObject(, "PowerPoint.Application")
+    If pptApp Is Nothing Then
+        Set pptApp = CreateObject("PowerPoint.Application")
+    End If
+    On Error GoTo 0
+    pptApp.Visible = True
+
+    pptPath = "xxxx"
+    Set pptPres = pptApp.Presentations.Open(pptPath)
+    
+    Set templeteSlideChoir = pptPres.Slides(1)
+
+    For Each item In json
+        Dim comType As String
+        comType = SafeToString(item("comtype_name"))
+
+        templeteSlideChoir.Copy
+
+        Set newSlide = pptPres.Slides.Paste(pptPres.Slides.Count + 1)(1)
+
+        Call ReplaceTextInShapes(newSlide, "{{comp_type}}", comType)
+        Call ReplaceTextInShapes(newSlide, "{{name}}", SafeToString(item("participant_name")))
+        Call ReplaceTextInShapes(newSlide, "{{from}}", SafeToString(item("from")))
+        Call ReplaceTextInShapes(newSlide, "{{category}}", SafeToString(item("category_name")))
+        Call ReplaceTextInShapes(newSlide, "{{song1}}", SafeToString(item("song1_title")))
+        Call ReplaceTextInShapes(newSlide, "{{conductor1}}", SafeToString(item("song1_composer")))
+        Call ReplaceTextInShapes(newSlide, "{{song2}}", SafeToString(item("song2_title")))
+        Call ReplaceTextInShapes(newSlide, "{{conductor2}}", SafeToString(item("song2_composer")))
+        Call ReplaceTextInShapes(newSlide, "{{conductor}}", SafeToString(item("conductor_name")))
+
+    Next item
+    
+    MsgBox "Slides successfully generated !", vbInformation
+End Sub
+
+Sub ReplaceTextInShapes(sld As Object, findText As String, replaceText As String)
+    Dim shp As Object
+    For Each shp In sld.Shapes
+        On Error Resume Next
+        If shp.Type = 6 Then ' msoGroup = 6
+            Dim gi As Object
+            For Each gi In shp.GroupItems
+                If gi.HasTextFrame Then
+                    If gi.TextFrame.HasText Then
+                        gi.TextFrame.TextRange.text = Replace(gi.TextFrame.TextRange.text, findText, replaceText)
+                    End If
+                End If
+            Next gi
+        Else
+            If shp.HasTextFrame Then
+                If shp.TextFrame.HasText Then
+                    shp.TextFrame.TextRange.text = Replace(shp.TextFrame.TextRange.text, findText, replaceText)
+                End If
+            End If
+        End If
+        On Error GoTo 0
+    Next shp
+End Sub
+
+Function SafeToString(v As Variant) As String
+
+    If IsError(v) Then
+        SafeToString = ""
+
+    ElseIf IsEmpty(v) Then
+        SafeToString = ""
+
+    ElseIf IsNull(v) Then
+        SafeToString = ""
+
+    Else
+        SafeToString = Trim(CStr(v & ""))
+
+    End If
+
+End Function
+
+Function ContainsString(text As Variant, arr As Variant) As Boolean
+    Dim v As Variant
+    Dim txt As String
+    txt = SafeToString(text)
+    For Each v In arr
+        If InStr(1, txt, SafeToString(v), vbTextCompare) > 0 Then
+            ContainsString = True
+            Exit Function
+        End If
+    Next v
+    ContainsString = False
+End Function
